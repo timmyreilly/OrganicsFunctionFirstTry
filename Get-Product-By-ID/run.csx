@@ -9,15 +9,25 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     var headers = req.Headers;
     string jsonContent = content.ReadAsStringAsync().Result;
     string requestBody = await req.Content.ReadAsStringAsync();
-    log.Info("what we got: ", requestBody);
-    // var re = req.GetQueryNameValuePairs().Where(nv => nv.Key == "q").Select(nv => nv.Value).FirstOrDefault();
-    // log.Info("WHAT IS RE: ", re.ToString());
+
     var reqHeaders = req.GetQueryNameValuePairs();
-    foreach (var x in reqHeaders){
-        log.Info(x.ToString()); 
+    // var theParams; 
+    var theParams = new KeyValuePair<string, string>();
+    log.Info("reqHeaders: " + reqHeaders);
+    Dictionary<string, string> paramDictionary = new Dictionary<string, string>();
+    foreach (KeyValuePair<string, string> x in reqHeaders)
+    {
+        log.Info("Key: " + x.Key);
+        log.Info("Value: " + x.Value);
+        paramDictionary.Add(x.Key, x.Value);
+
     }
-    var productId = reqHeaders.ToString(); 
-    var result = $"The product name for your product id {productId} from {reqHeaders} is Starfruit Explosion";
+    var pDictionary = reqHeaders.ToDictionary(y => y.Key, y => y.Value); 
+    log.Info(pDictionary.Keys.ToString()); 
+    // log.Info(paramDictionary.First());
+    log.Info(paramDictionary.ToString());
+    
+    var result = $"The product name for your product id {theParams.ToString()} from {reqHeaders} is Starfruit Explosion";
     return req.CreateResponse(HttpStatusCode.OK, result);
 }
 
